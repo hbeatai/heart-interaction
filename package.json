@@ -1,0 +1,38 @@
+{
+  "name": "@heart/interaction",
+  "version": "1.0.0",
+  "description": "通用互动功能包（点赞/评论/收藏）",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "lint": "eslint --ext .js,.ts src",
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "interaction",
+    "like",
+    "comment",
+    "favorite",
+    "firestore"
+  ],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "firebase-admin": "^13.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@typescript-eslint/eslint-plugin": "^8.49.0",
+    "@typescript-eslint/parser": "^8.49.0",
+    "eslint": "^9.39.2",
+    "firebase-admin": "^13.4.0",
+    "globals": "^16.5.0",
+    "typescript": "^5.8.0"
+  },
+  "files": [
+    "lib/**/*",
+    "README.md"
+  ]
+}
