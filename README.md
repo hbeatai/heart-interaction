@@ -17,12 +17,14 @@
 ## 安装
 
 ```bash
-# 使用最新 release（推荐）
-npm install @heart/interaction@github:hbeatai/heart-interaction#release/latest
-
-# 或锁定到指定版本
+# 生产项目：锁定版本（推荐）
 npm install @heart/interaction@github:hbeatai/heart-interaction#release/v1.0.0
+
+# 开发/测试环境：使用最新版本
+npm install @heart/interaction@github:hbeatai/heart-interaction#release/latest
 ```
+
+> ⚠️ **注意**：`release/latest` 会随新版本更新，可能包含 breaking changes。生产项目请锁定具体版本。
 
 ## 使用示例
 
@@ -186,18 +188,15 @@ git push origin v1.0.0
 
 ### 消费者更新依赖
 
-```bash
-# 使用 release/latest 的项目，重新安装即可获取最新版本
-npm install @heart/interaction@github:hbeatai/heart-interaction#release/latest
-```
+参见 [安装](#安装) 章节。
 
 ### 分支说明
 
-| 分支 | 用途 |
-|------|------|
-| `main` | 开发分支，不包含 `lib/` 编译产物 |
-| `release/latest` | 始终指向最新版本，推荐使用 |
-| `release/v*` | 特定版本分支，用于锁定版本 |
+| 分支 | 用途 | 是否可变 |
+|------|------|----------|
+| `main` | 开发分支，不包含 `lib/` | ✅ 可变 |
+| `release/v*` | 特定版本分支，生产环境使用 | ❌ 不可变 |
+| `release/latest` | 始终指向最新版本，开发环境使用 | ✅ 可变 |
 
 ## License
 
