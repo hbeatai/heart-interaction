@@ -56,4 +56,21 @@ export interface ILikeRepository {
     targetIds: string[],
     userId: string
   ): Promise<Map<string, boolean>>;
+
+  /**
+   * 获取用户点赞过的内容列表
+   *
+   * ⚠️ 需要 Firestore 复合索引，详见 [README](../../README.md#firestore-索引配置)
+   *
+   * @param userId 用户ID
+   * @param targetCollection 可选，筛选特定目标集合
+   * @param limit 每页数量
+   * @param startAfter 分页游标，上一页最后一条的 createdAt
+   */
+  getUserLikes(
+    userId: string,
+    targetCollection?: string,
+    limit?: number,
+    startAfter?: Timestamp
+  ): Promise<Like[]>;
 }

@@ -13,6 +13,7 @@
 - ✅ 批量查询支持（batchIsLiked, batchIsFavorited）
 - ✅ 评论软删除
 - ✅ 可自定义集合名称
+- ✅ 用户维度查询（我点赞过、我评论过）
 
 ## 安装
 
@@ -65,6 +66,10 @@ const likedMap = await repo.batchIsLiked("character_card", [id1, id2, id3], user
 // 获取点赞列表（游标分页）
 const likes = await repo.getLikes("character_card", cardId, 20);
 const nextPage = await repo.getLikes("character_card", cardId, 20, likes[likes.length - 1].createdAt);
+
+// 获取用户点赞过的内容（⚠️ 需要索引，详见“Firestore 索引配置”章节）
+const myLikes = await repo.getUserLikes(userId, "character_card", 20);
+const myAllLikes = await repo.getUserLikes(userId); // 不限制目标集合
 ```
 
 ### 3. 评论功能
@@ -86,6 +91,10 @@ const nextPage = await repo.getComments("character_card", cardId, 20, comments[c
 
 // 获取单条评论（已删除的返回 null）
 const singleComment = await repo.getComment("character_card", cardId, commentId);
+
+// 获取用户发表过的评论（⚠️ 需要索引，详见“Firestore 索引配置”章节）
+const myComments = await repo.getUserComments(userId, "character_card", 20);
+const myAllComments = await repo.getUserComments(userId); // 不限制目标集合
 ```
 
 ### 4. 收藏功能
@@ -166,6 +175,19 @@ interface InteractionStats {
 }
 ```
 
+## Firestore 索引配置
+
+> ⚠️ **重要**：`getUserLikes` 和 `getUserComments` 方法使用 `collectionGroup` 查询，**必须**先创建 Firestore 复合索引才能使用。
+
+将本项目根目录的 [`firestore.indexes.json`](./firestore.indexes.json) 复制到你的 Firebase 项目中，然后执行：
+
+```bash
+firebase deploy --only firestore:indexes
+```
+
+> 💡 如果使用自定义集合名称，请将 [`firestore.indexes.json`](./firestore.indexes.json) 中的 `collectionGroup`
+> 值替换为对应的自定义名称。
+
 ## 发布流程
 
 本项目使用 GitHub Actions 自动发布。当推送 tag 时，会自动构建并发布到 release 分支。
@@ -192,11 +214,11 @@ git push origin v1.0.0
 
 ### 分支说明
 
-| 分支 | 用途 | 是否可变 |
-|------|------|----------|
-| `main` | 开发分支，不包含 `lib/` | ✅ 可变 |
-| `release/v*` | 特定版本分支，生产环境使用 | ❌ 不可变 |
-| `release/latest` | 始终指向最新版本，开发环境使用 | ✅ 可变 |
+| 分支               | 用途              | 是否可变  |
+|------------------|-----------------|-------|
+| `main`           | 开发分支，不包含 `lib/` | ✅ 可变  |
+| `release/v*`     | 特定版本分支，生产环境使用   | ❌ 不可变 |
+| `release/latest` | 始终指向最新版本，开发环境使用 | ✅ 可变  |
 
 ## License
 

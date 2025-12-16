@@ -152,4 +152,31 @@ export class CommentRepository implements ICommentRepository {
     const {indexedAt: _, ...rest} = data;
     return {id: doc.id, ...rest} as Comment;
   }
+
+  async getUserComments(
+    userId: string,
+    targetCollection?: string,
+    limit: number = 20,
+    startAfter?: Timestamp
+  ): Promise<Comment[]> {
+    let query = this.db
+      .collectionGroup(this.subCollectionName)
+      .where("userId", "==", userId)
+      .orderBy("indexedAt", "desc")
+      .limit(limit);
+
+    if (targetCollection) {
+      query = query.where("targetCollection", "==", targetCollection);
+    }
+
+    if (startAfter) {
+      query = query.startAfter(startAfter);
+    }
+
+    const snapshot = await query.get();
+    return snapshot.docs.map((doc) => {
+      const {indexedAt: _, ...rest} = doc.data() as CommentData;
+      return {id: doc.id, ...rest} as Comment;
+    });
+  }
 }

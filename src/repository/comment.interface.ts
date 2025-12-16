@@ -70,4 +70,21 @@ export interface ICommentRepository {
     targetId: string,
     commentId: string
   ): Promise<Comment | null>;
+
+  /**
+   * 获取用户发表过的评论列表
+   *
+   * ⚠️ 需要 Firestore 复合索引，详见 [README](../../README.md#firestore-索引配置)
+   *
+   * @param userId 用户ID
+   * @param targetCollection 可选，筛选特定目标集合
+   * @param limit 每页数量
+   * @param startAfter 分页游标，上一页最后一条的 createdAt
+   */
+  getUserComments(
+    userId: string,
+    targetCollection?: string,
+    limit?: number,
+    startAfter?: Timestamp
+  ): Promise<Comment[]>;
 }

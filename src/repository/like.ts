@@ -140,4 +140,28 @@ export class LikeRepository implements ILikeRepository {
 
     return result;
   }
+
+  async getUserLikes(
+    userId: string,
+    targetCollection?: string,
+    limit: number = 20,
+    startAfter?: Timestamp
+  ): Promise<Like[]> {
+    let query = this.db
+      .collectionGroup(this.subCollectionName)
+      .where("userId", "==", userId)
+      .orderBy("createdAt", "desc")
+      .limit(limit);
+
+    if (targetCollection) {
+      query = query.where("targetCollection", "==", targetCollection);
+    }
+
+    if (startAfter) {
+      query = query.startAfter(startAfter);
+    }
+
+    const snapshot = await query.get();
+    return snapshot.docs.map((doc) => doc.data() as Like);
+  }
 }

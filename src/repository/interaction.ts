@@ -68,6 +68,15 @@ export class InteractionRepository implements IInteractionRepository {
     return this.likeRepo.batchIsLiked(targetCollection, targetIds, userId);
   }
 
+  getUserLikes(
+    userId: string,
+    targetCollection?: string,
+    limit?: number,
+    startAfter?: Timestamp
+  ): Promise<Like[]> {
+    return this.likeRepo.getUserLikes(userId, targetCollection, limit, startAfter);
+  }
+
   // ==================== 评论 ====================
 
   addComment(
@@ -111,6 +120,15 @@ export class InteractionRepository implements IInteractionRepository {
     commentId: string
   ): Promise<Comment | null> {
     return this.commentRepo.getComment(targetCollection, targetId, commentId);
+  }
+
+  getUserComments(
+    userId: string,
+    targetCollection?: string,
+    limit?: number,
+    startAfter?: Timestamp
+  ): Promise<Comment[]> {
+    return this.commentRepo.getUserComments(userId, targetCollection, limit, startAfter);
   }
 
   // ==================== 收藏 ====================
