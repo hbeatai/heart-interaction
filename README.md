@@ -1,5 +1,7 @@
 # @heart/interaction
 
+[![Latest Release](https://img.shields.io/github/v/release/hbeatai/heart-interaction)](https://github.com/hbeatai/heart-interaction/releases/latest)
+
 通用互动功能包，提供点赞、评论、收藏功能的类型定义和数据库操作。
 
 ## 特性
@@ -19,12 +21,14 @@
 
 ```bash
 # 生产项目：锁定版本（推荐）
-npm install @heart/interaction@github:hbeatai/heart-interaction#release/v1.0.0
+npm install @heart/interaction@github:hbeatai/heart-interaction#release/vX.X.X
 
 # 开发/测试环境：使用最新版本
 npm install @heart/interaction@github:hbeatai/heart-interaction#release/latest
 ```
 
+> 📦 **获取最新版本号**：点击上方 badge 或访问 [Releases](https://github.com/hbeatai/heart-interaction/releases) 页面，将 `vX.X.X` 替换为实际版本号（如 `v1.0.0`）。
+>
 > ⚠️ **注意**：`release/latest` 会随新版本更新，可能包含 breaking changes。生产项目请锁定具体版本。
 
 ## 使用示例
