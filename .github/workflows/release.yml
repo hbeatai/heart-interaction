@@ -1,0 +1,45 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Publish to release branches
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # 强制添加 lib/ 目录
+          git add -f lib/
+          git commit -m "release: $VERSION"
+          
+          # 推送到 release/{version} 分支（不 force，防止覆盖已发布版本）
+          git push origin HEAD:refs/heads/release/$VERSION
+          echo "✅ Published to release/$VERSION"
+          
+          # 更新 release/latest 分支（force，始终指向最新）
+          git push origin HEAD:refs/heads/release/latest --force
+          echo "✅ Updated release/latest"

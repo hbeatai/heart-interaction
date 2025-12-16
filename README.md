@@ -17,8 +17,11 @@
 ## 安装
 
 ```bash
-# 通过 Git 依赖安装
-npm install git+https://github.com/hbeatai/heart-interaction.git#v1.0.0
+# 使用最新 release（推荐）
+npm install @heart/interaction@github:hbeatai/heart-interaction#release/latest
+
+# 或锁定到指定版本
+npm install @heart/interaction@github:hbeatai/heart-interaction#release/v1.0.0
 ```
 
 ## 使用示例
@@ -26,8 +29,6 @@ npm install git+https://github.com/hbeatai/heart-interaction.git#v1.0.0
 ### 1. 初始化 Repository
 
 ```typescript
-// noinspection JSAnnotator
-
 import {InteractionRepository} from "@heart/interaction";
 import {getFirestore} from "firebase-admin/firestore";
 
@@ -35,7 +36,7 @@ const db = getFirestore();
 const repo = new InteractionRepository(db);
 
 // 或自定义集合名称
-const repo = new InteractionRepository(db, {
+const customRepo = new InteractionRepository(db, {
   likes: "likes",
   comments: "comments",
   favorites: "favorites",
@@ -67,8 +68,6 @@ const nextPage = await repo.getLikes("character_card", cardId, 20, likes[likes.l
 ### 3. 评论功能
 
 ```typescript
-// noinspection JSAnnotator
-
 // 添加评论
 const comment = await repo.addComment("character_card", cardId, userId, "这个角色很棒！");
 // { id, userId, targetCollection, targetId, content, createdAt, updatedAt }
@@ -84,7 +83,7 @@ const comments = await repo.getComments("character_card", cardId, 20);
 const nextPage = await repo.getComments("character_card", cardId, 20, comments[comments.length - 1].createdAt);
 
 // 获取单条评论（已删除的返回 null）
-const comment = await repo.getComment("character_card", cardId, commentId);
+const singleComment = await repo.getComment("character_card", cardId, commentId);
 ```
 
 ### 4. 收藏功能
@@ -165,18 +164,40 @@ interface InteractionStats {
 }
 ```
 
-## 版本管理
+## 发布流程
 
-使用 Git tag 管理版本：
+本项目使用 GitHub Actions 自动发布。当推送 tag 时，会自动构建并发布到 release 分支。
+
+### 发布新版本
 
 ```bash
-# 发布新版本
+# 1. 确保代码已提交并推送到 main
+git push origin main
+
+# 2. 创建并推送 tag
 git tag v1.0.0
 git push origin v1.0.0
 
-# 在项目中更新到新版本
-npm install git+https://github.com/hbeatai/heart-interaction.git#v1.0.0
+# 3. GitHub Actions 自动执行：
+#    - npm ci && npm run build
+#    - 推送到 release/v1.0.0 分支
+#    - 同时更新 release/latest 分支
 ```
+
+### 消费者更新依赖
+
+```bash
+# 使用 release/latest 的项目，重新安装即可获取最新版本
+npm install @heart/interaction@github:hbeatai/heart-interaction#release/latest
+```
+
+### 分支说明
+
+| 分支 | 用途 |
+|------|------|
+| `main` | 开发分支，不包含 `lib/` 编译产物 |
+| `release/latest` | 始终指向最新版本，推荐使用 |
+| `release/v*` | 特定版本分支，用于锁定版本 |
 
 ## License
 
