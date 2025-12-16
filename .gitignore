@@ -8,3 +8,6 @@ lib/
 
 # vscode
 .vscode
+
+# 发布文档
+release

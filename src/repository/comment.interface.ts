@@ -24,12 +24,15 @@ export interface ICommentRepository {
    * @param targetCollection 目标集合名
    * @param targetId 目标文档ID
    * @param commentId 评论ID
+   * @param userId 用户ID（用于权限校验）
    * @param content 评论内容
+   * @throws Error 评论不存在、已删除或无权限时抛出错误
    */
   updateComment(
     targetCollection: string,
     targetId: string,
     commentId: string,
+    userId: string,
     content: string
   ): Promise<void>;
 
@@ -79,7 +82,7 @@ export interface ICommentRepository {
    * @param userId 用户ID
    * @param targetCollection 可选，筛选特定目标集合
    * @param limit 每页数量
-   * @param startAfter 分页游标，上一页最后一条的 createdAt
+   * @param startAfter 分页游标，上一页最后一条的 indexedAt
    */
   getUserComments(
     userId: string,

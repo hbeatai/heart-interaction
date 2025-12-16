@@ -92,9 +92,10 @@ export class InteractionRepository implements IInteractionRepository {
     targetCollection: string,
     targetId: string,
     commentId: string,
+    userId: string,
     content: string
   ): Promise<void> {
-    return this.commentRepo.updateComment(targetCollection, targetId, commentId, content);
+    return this.commentRepo.updateComment(targetCollection, targetId, commentId, userId, content);
   }
 
   deleteComment(

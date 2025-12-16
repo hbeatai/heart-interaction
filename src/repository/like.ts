@@ -35,7 +35,15 @@ export class LikeRepository implements ILikeRepository {
     };
 
     await this.db.runTransaction(async (tx) => {
-      const likeDoc = await tx.get(likeRef);
+      const [targetDoc, likeDoc] = await Promise.all([
+        tx.get(targetRef),
+        tx.get(likeRef),
+      ]);
+
+      if (!targetDoc.exists) {
+        throw new Error(`Target document not found: ${targetCollection}/${targetId}`);
+      }
+
       if (likeDoc.exists) {
         return; // 幂等：已点赞则跳过
       }
@@ -63,7 +71,15 @@ export class LikeRepository implements ILikeRepository {
     };
 
     await this.db.runTransaction(async (tx) => {
-      const likeDoc = await tx.get(likeRef);
+      const [targetDoc, likeDoc] = await Promise.all([
+        tx.get(targetRef),
+        tx.get(likeRef),
+      ]);
+
+      if (!targetDoc.exists) {
+        throw new Error(`Target document not found: ${targetCollection}/${targetId}`);
+      }
+
       if (!likeDoc.exists) {
         return; // 幂等：未点赞则跳过
       }

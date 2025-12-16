@@ -16,6 +16,7 @@ module.exports = [
       "lib/**/*",
       "node_modules/**/*",
       "eslint.config.*",
+      "test/**/*",
     ],
   },
 

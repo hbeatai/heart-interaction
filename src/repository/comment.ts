@@ -41,6 +41,11 @@ export class CommentRepository implements ICommentRepository {
     };
 
     await this.db.runTransaction(async (tx) => {
+      const targetDoc = await tx.get(targetRef);
+      if (!targetDoc.exists) {
+        throw new Error(`Target document not found: ${targetCollection}/${targetId}`);
+      }
+
       tx.set(commentRef, commentData);
 
       tx.update(targetRef, updateTarget);
@@ -54,17 +59,37 @@ export class CommentRepository implements ICommentRepository {
     targetCollection: string,
     targetId: string,
     commentId: string,
+    userId: string,
     content: string
   ): Promise<void> {
-    await this.db
+    const commentRef = this.db
       .collection(targetCollection)
       .doc(targetId)
       .collection(this.subCollectionName)
-      .doc(commentId)
-      .update({
-        content,
-        updatedAt: Timestamp.now(),
-      });
+      .doc(commentId);
+
+    const updateComment: UpdateData<CommentData> = {
+      content,
+      updatedAt: Timestamp.now(),
+    };
+
+    await this.db.runTransaction(async (tx) => {
+      const commentDoc = await tx.get(commentRef);
+      if (!commentDoc.exists) {
+        throw new Error(`Comment not found: ${targetCollection}/${targetId}/comments/${commentId}`);
+      }
+
+      const data = commentDoc.data() as CommentData;
+      if (!data.indexedAt) {
+        throw new Error(`Comment already deleted: ${targetCollection}/${targetId}/comments/${commentId}`);
+      }
+
+      if (data.userId !== userId) {
+        throw new Error(`Permission denied: user ${userId} cannot update comment owned by ${data.userId}`);
+      }
+
+      tx.update(commentRef, updateComment);
+    });
   }
 
   async deleteComment(
@@ -82,18 +107,26 @@ export class CommentRepository implements ICommentRepository {
     const updateComment: UpdateData<CommentData> = {
       indexedAt: FieldValue.delete(),
       updatedAt: Timestamp.now(),
-    }
+    };
     const updateTarget: UpdateData<InteractionStats> = {
       commentCount: FieldValue.increment(-1),
     };
 
     await this.db.runTransaction(async (tx) => {
-      const commentDb = await tx.get(commentRef);
-      if (!commentDb.exists) {
+      const [targetDoc, commentDoc] = await Promise.all([
+        tx.get(targetRef),
+        tx.get(commentRef),
+      ]);
+
+      if (!targetDoc.exists) {
+        throw new Error(`Target document not found: ${targetCollection}/${targetId}`);
+      }
+
+      if (!commentDoc.exists) {
         return; // 幂等：不存在则跳过
       }
 
-      const data = commentDb.data() as CommentData;
+      const data = commentDoc.data() as CommentData;
       if (!data.indexedAt) {
         return; // 幂等：已删除则跳过
       }

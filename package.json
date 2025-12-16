@@ -8,6 +8,8 @@
     "lint": "eslint --ext .js,.ts src",
     "build": "tsc",
     "watch": "tsc --watch",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -24,11 +26,15 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
+    "@firebase/rules-unit-testing": "^5.0.0",
+    "@types/jest": "^30.0.0",
     "@typescript-eslint/eslint-plugin": "^8.49.0",
     "@typescript-eslint/parser": "^8.49.0",
     "eslint": "^9.39.2",
     "firebase-admin": "^13.4.0",
     "globals": "^16.5.0",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.6",
     "typescript": "^5.8.0"
   },
   "files": [

@@ -46,7 +46,15 @@ export class FavoriteRepository implements IFavoriteRepository {
     };
 
     await this.db.runTransaction(async (tx) => {
-      const favoriteDoc = await tx.get(favoriteRef);
+      const [targetDoc, favoriteDoc] = await Promise.all([
+        tx.get(targetRef),
+        tx.get(favoriteRef),
+      ]);
+
+      if (!targetDoc.exists) {
+        throw new Error(`Target document not found: ${targetCollection}/${targetId}`);
+      }
+
       if (favoriteDoc.exists) {
         return; // 幂等：已收藏则跳过
       }
@@ -76,7 +84,15 @@ export class FavoriteRepository implements IFavoriteRepository {
     };
 
     await this.db.runTransaction(async (tx) => {
-      const favoriteDoc = await tx.get(favoriteRef);
+      const [targetDoc, favoriteDoc] = await Promise.all([
+        tx.get(targetRef),
+        tx.get(favoriteRef),
+      ]);
+
+      if (!targetDoc.exists) {
+        throw new Error(`Target document not found: ${targetCollection}/${targetId}`);
+      }
+
       if (!favoriteDoc.exists) {
         return; // 幂等：未收藏则跳过
       }
