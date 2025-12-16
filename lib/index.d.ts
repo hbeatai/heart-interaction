@@ -1,0 +1,10 @@
+export * from "./types";
+export type { ILikeRepository } from "./repository/like.interface";
+export type { ICommentRepository } from "./repository/comment.interface";
+export type { IFavoriteRepository } from "./repository/favorite.interface";
+export type { IInteractionRepository, InteractionCollectionNames } from "./repository/interaction.interface";
+export { BATCH_LIMIT, DEFAULT_COLLECTION_NAMES } from "./config";
+export { LikeRepository } from "./repository/like";
+export { CommentRepository } from "./repository/comment";
+export { FavoriteRepository } from "./repository/favorite";
+export { InteractionRepository } from "./repository/interaction";
