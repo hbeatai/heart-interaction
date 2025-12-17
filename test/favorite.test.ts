@@ -114,41 +114,54 @@ describe("FavoriteRepository", () => {
   });
 
   describe("isFavorited", () => {
-    it("should return true when favorited", async () => {
+    it("should return Favorite when favorited", async () => {
       const {mockDb, mockDocRef} = createMockFirestore();
       const repo = new FavoriteRepository(mockDb);
 
-      mockDocRef.get.mockResolvedValueOnce({exists: true});
+      const mockFavorite = {
+        userId: "user1",
+        targetCollection: "posts",
+        targetId: "post1",
+        createdAt: {toDate: () => new Date()},
+      };
+      mockDocRef.get.mockResolvedValueOnce({exists: true, data: () => mockFavorite});
 
       const result = await repo.isFavorited("posts", "post1", "user1");
-      expect(result).toBe(true);
+      expect(result).toEqual(mockFavorite);
     });
 
-    it("should return false when not favorited", async () => {
+    it("should return null when not favorited", async () => {
       const {mockDb, mockDocRef} = createMockFirestore();
       const repo = new FavoriteRepository(mockDb);
 
       mockDocRef.get.mockResolvedValueOnce({exists: false});
 
       const result = await repo.isFavorited("posts", "post1", "user1");
-      expect(result).toBe(false);
+      expect(result).toBeNull();
     });
   });
 
   describe("batchIsFavorited", () => {
-    it("should return map of favorited status", async () => {
+    it("should return map of Favorite or null", async () => {
       const {mockDb} = createMockFirestore();
       const repo = new FavoriteRepository(mockDb);
 
+      const mockFavorite1 = {
+        userId: "user1",
+        targetCollection: "posts",
+        targetId: "p1",
+        createdAt: {toDate: () => new Date()},
+      };
+
       (mockDb.getAll as jest.Mock).mockResolvedValueOnce([
-        {exists: true},
-        {exists: false},
+        {exists: true, data: () => mockFavorite1},
+        {exists: false, data: () => undefined},
       ]);
 
       const result = await repo.batchIsFavorited("posts", ["p1", "p2"], "user1");
 
-      expect(result.get("p1")).toBe(true);
-      expect(result.get("p2")).toBe(false);
+      expect(result.get("p1")).toEqual(mockFavorite1);
+      expect(result.get("p2")).toBeNull();
     });
 
     it("should throw error when exceeding batch limit", async () => {

@@ -107,14 +107,18 @@ export class FavoriteRepository implements IFavoriteRepository {
     targetCollection: string,
     targetId: string,
     userId: string
-  ): Promise<boolean> {
+  ): Promise<Favorite | null> {
     const favoriteDoc = await this.db
       .collection(this.collectionName)
       .doc(userId)
       .collection(this.getSubCollectionName(targetCollection))
       .doc(targetId)
       .get();
-    return favoriteDoc.exists;
+    if (!favoriteDoc.exists) {
+      return null;
+    }
+
+    return favoriteDoc.data() as Favorite;
   }
 
   async getUserFavorites(
@@ -142,12 +146,12 @@ export class FavoriteRepository implements IFavoriteRepository {
     targetCollection: string,
     targetIds: string[],
     userId: string
-  ): Promise<Map<string, boolean>> {
+  ): Promise<Map<string, Favorite | null>> {
     if (targetIds.length > BATCH_LIMIT) {
       throw new Error(`targetIds length exceeds limit of ${BATCH_LIMIT}`);
     }
 
-    const result = new Map<string, boolean>();
+    const result = new Map<string, Favorite | null>();
 
     if (targetIds.length === 0) {
       return result;
@@ -165,7 +169,12 @@ export class FavoriteRepository implements IFavoriteRepository {
     const docs = await this.db.getAll(...refs);
 
     targetIds.forEach((targetId, index) => {
-      result.set(targetId, docs[index].exists);
+      const doc = docs[index];
+      if (!doc.exists) {
+        result.set(targetId, null);
+      } else {
+        result.set(targetId, doc.data() as Favorite);
+      }
     });
 
     return result;

@@ -154,7 +154,7 @@ export class InteractionRepository implements IInteractionRepository {
     targetCollection: string,
     targetId: string,
     userId: string
-  ): Promise<boolean> {
+  ): Promise<Favorite | null> {
     return this.favoriteRepo.isFavorited(targetCollection, targetId, userId);
   }
 
@@ -171,7 +171,7 @@ export class InteractionRepository implements IInteractionRepository {
     targetCollection: string,
     targetIds: string[],
     userId: string
-  ): Promise<Map<string, boolean>> {
+  ): Promise<Map<string, Favorite | null>> {
     return this.favoriteRepo.batchIsFavorited(targetCollection, targetIds, userId);
   }
 }

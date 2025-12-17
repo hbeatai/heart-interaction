@@ -110,11 +110,15 @@ await repo.favorite("character_card", cardId, userId);
 // 取消收藏
 await repo.unfavorite("character_card", cardId, userId);
 
-// 检查是否已收藏
-const isFavorited = await repo.isFavorited("character_card", cardId, userId);
+// 检查是否已收藏（返回 Favorite 对象或 null）
+const favorite = await repo.isFavorited("character_card", cardId, userId);
+if (favorite) {
+  console.log("收藏于", favorite.createdAt);
+}
 
-// 批量检查（最多 100 个）
+// 批量检查（最多 100 个，返回以 targetId 为键的收藏记录映射，未收藏的值为 null）
 const favoritedMap = await repo.batchIsFavorited("character_card", [id1, id2], userId);
+// Map { "id1" => Favorite, "id2" => null }
 
 // 获取用户的收藏列表（按目标集合分类，游标分页）
 const favorites = await repo.getUserFavorites(userId, "character_card", 20);

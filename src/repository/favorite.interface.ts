@@ -34,12 +34,13 @@ export interface IFavoriteRepository {
    * @param targetCollection 目标集合名
    * @param targetId 目标文档ID
    * @param userId 用户ID
+   * @returns 收藏记录，未收藏则返回 null
    */
   isFavorited(
     targetCollection: string,
     targetId: string,
     userId: string
-  ): Promise<boolean>;
+  ): Promise<Favorite | null>;
 
   /**
    * 获取用户的收藏列表
@@ -60,12 +61,12 @@ export interface IFavoriteRepository {
    * @param targetCollection 目标集合名
    * @param targetIds 目标文档ID列表
    * @param userId 用户ID
-   * @returns Map<targetId, isFavorited>
+   * @returns 以 targetId 为键的收藏记录映射，未收藏的值为 null
    * @throws Error if targetIds.length > 100
    */
   batchIsFavorited(
     targetCollection: string,
     targetIds: string[],
     userId: string
-  ): Promise<Map<string, boolean>>;
+  ): Promise<Map<string, Favorite | null>>;
 }
