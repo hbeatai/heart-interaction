@@ -23,13 +23,24 @@
 # 生产项目：锁定版本（推荐）
 npm install @heart/interaction@github:hbeatai/heart-interaction#release/vX.X.X
 
-# 开发/测试环境：使用最新版本
+# 自动跟随最新版本
 npm install @heart/interaction@github:hbeatai/heart-interaction#release/latest
 ```
 
 > 📦 **获取最新版本号**：点击上方 badge 或访问 [Releases](https://github.com/hbeatai/heart-interaction/releases) 页面，将 `vX.X.X` 替换为实际版本号（如 `v1.0.0`）。
 >
 > ⚠️ **注意**：`release/latest` 会随新版本更新，可能包含 breaking changes。生产项目请锁定具体版本。
+
+### 本地开发版本
+
+如需安装本地未发布的开发版本（用于调试或测试新功能）：
+
+```bash
+cd /path/to/your-project
+bash /path/to/heart-interaction/scripts/link-local.sh
+```
+
+脚本会自动构建、打包并安装到当前项目。
 
 ## 使用示例
 
