@@ -6,11 +6,12 @@
  * interface CharacterCard extends InteractionStats {
  *   id: string;
  *   name: string;
- *   // likeCount, commentCount, favoriteCount 已包含
  * }
  */
 export interface InteractionStats {
-  likeCount: number;
-  commentCount: number;
-  favoriteCount: number;
+  likeCount?: number;
+  commentCount?: number;
+  favoriteCount?: number;
+  // 分享计数（仅提供类型定义，不提供具体实现）
+  shareCount?: number;
 }
